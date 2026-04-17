@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I Love You Ramya</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #F5C842;
+    --gold-light: #FFE680;
+    --gold-pale: #FFF9D6;
+    --ocean-deep: #0A4A7A;
+    --ocean-mid: #1A6FAA;
+    --ocean-light: #4BA3D3;
+    --ocean-foam: #AEE0F5;
+    --sand: #FAF0C8;
+    --white: #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Cormorant Garamond', serif;
+    background: var(--ocean-deep);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  #cursor {
+    position: fixed;
+    width: 18px; height: 18px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+    box-shadow: 0 0 12px var(--gold), 0 0 30px rgba(245,200,66,0.4);
+  }
+
+  /* SKY */
+  #sky {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 55vh;
+    background: linear-gradient(180deg,
+      #0A2A5A 0%,
+      #0D4080 20%,
+      #1A6FAA 55%,
+      #4BA3D3 80%,
+      #AEE0F5 100%
+    );
+    z-index: 0;
+  }
+
+  /* SUN */
+  #sun {
+    position: fixed;
+    top: 60px; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #FFF9A0, #F5C842 40%, #F0A800 80%);
+    box-shadow:
+      0 0 40px 15px rgba(245,200,66,0.5),
+      0 0 80px 30px rgba(245,200,66,0.25),
+      0 0 160px 60px rgba(245,200,66,0.1);
+    animation: sunPulse 4s ease-in-out infinite;
+    z-index: 1;
+  }
+  @keyframes sunPulse {
+    0%, 100% { box-shadow: 0 0 40px 15px rgba(245,200,66,0.5), 0 0 80px 30px rgba(245,200,66,0.25), 0 0 160px 60px rgba(245,200,66,0.1); }
+    50%       { box-shadow: 0 0 60px 25px rgba(245,200,66,0.7), 0 0 110px 50px rgba(245,200,66,0.35), 0 0 200px 80px rgba(245,200,66,0.15); }
+  }
+
+  /* SUN RAYS */
+  #sun-rays {
+    position: fixed;
+    top: -10px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 600px;
+    z-index: 0;
+    animation: raysRotate 20s linear infinite;
+  }
+  @keyframes raysRotate { from { transform: translateX(-50%) rotate(0deg); } to { transform: translateX(-50%) rotate(360deg); } }
+  .ray {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 300px; height: 2px;
+    transform-origin: 0 50%;
+    background: linear-gradient(90deg, rgba(245,200,66,0.4), transparent);
+    border-radius: 2px;
+  }
+
+  /* CLOUDS */
+  .cloud {
+    position: fixed;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50px;
+    filter: blur(6px);
+    z-index: 1;
+    animation: cloudDrift linear infinite;
+  }
+  @keyframes cloudDrift { from { transform: translateX(-200px); } to { transform: translateX(calc(100vw + 200px)); } }
+
+  /* OCEAN */
+  #ocean {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 50vh;
+    overflow: hidden;
+    z-index: 2;
+  }
+  .wave {
+    position: absolute;
+    left: -100%;
+    width: 300%;
+    height: 100%;
+    background: var(--ocean-mid);
+    border-radius: 40% 50% 0 0 / 30% 40% 0 0;
+    animation: waveMove linear infinite;
+    transform-origin: center bottom;
+  }
+  .wave-1 {
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(26,111,170,0.9) 0%, #0A4A7A 100%);
+    animation-duration: 8s;
+    opacity: 0.9;
+  }
+  .wave-2 {
+    bottom: 10px;
+    background: linear-gradient(180deg, rgba(75,163,211,0.6) 0%, rgba(26,111,170,0.7) 100%);
+    animation-duration: 11s;
+    animation-delay: -3s;
+    opacity: 0.7;
+  }
+  .wave-3 {
+    bottom: 20px;
+    background: linear-gradient(180deg, rgba(174,224,245,0.4) 0%, rgba(75,163,211,0.5) 100%);
+    animation-duration: 14s;
+    animation-delay: -7s;
+    opacity: 0.5;
+  }
+  @keyframes waveMove {
+    0%   { transform: translateX(0) scaleY(1); }
+    50%  { transform: translateX(33.3%) scaleY(1.05); }
+    100% { transform: translateX(66.6%) scaleY(1); }
+  }
+
+  /* FOAM LINES */
+  .foam {
+    position: absolute;
+    left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), rgba(255,255,255,0.8), rgba(255,255,255,0.6), transparent);
+    border-radius: 50%;
+    animation: foamAppear 3s ease-in-out infinite;
+  }
+  @keyframes foamAppear {
+    0%   { opacity: 0; transform: scaleX(0.5); }
+    30%  { opacity: 0.8; transform: scaleX(1); }
+    100% { opacity: 0; transform: scaleX(0.8) translateX(60px); }
+  }
+
+  /* SAND */
+  #sand {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 22vh;
+    background: linear-gradient(180deg, #E8C96A 0%, #D4A820 40%, #C89A10 100%);
+    z-index: 3;
+  }
+  #sand::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 12px;
+    background: linear-gradient(180deg, rgba(255,249,160,0.5) 0%, transparent 100%);
+  }
+
+  /* SEASHELLS */
+  .shell {
+    position: absolute;
+    font-size: 1.2rem;
+    opacity: 0.7;
+    animation: shellFloat 6s ease-in-out infinite;
+  }
+  @keyframes shellFloat {
+    0%, 100% { transform: rotate(0deg) translateY(0); }
+    50% { transform: rotate(8deg) translateY(-3px); }
+  }
+
+  /* BUBBLES */
+  .bubble {
+    position: fixed;
+    border-radius: 50%;
+    border: 1px solid rgba(174,224,245,0.5);
+    background: rgba(174,224,245,0.1);
+    pointer-events: none;
+    animation: bubbleRise linear infinite;
+    z-index: 4;
+  }
+  @keyframes bubbleRise {
+    0%   { transform: translateY(0) translateX(0); opacity: 0.8; }
+    100% { transform: translateY(-80vh) translateX(30px); opacity: 0; }
+  }
+
+  /* FLOWERS */
+  .flower {
+    position: fixed;
+    z-index: 6;
+    pointer-events: none;
+    animation: flowerFloat ease-in-out infinite;
+  }
+  @keyframes flowerFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25%  { transform: translateY(-15px) rotate(5deg); }
+    75%  { transform: translateY(-8px) rotate(-5deg); }
+  }
+
+  .flower-svg { filter: drop-shadow(0 4px 12px rgba(245,200,66,0.4)); }
+
+  /* FALLING PETALS */
+  .petal {
+    position: fixed;
+    top: -30px;
+    pointer-events: none;
+    z-index: 7;
+    animation: petalFall linear infinite;
+    font-size: 1.2rem;
+  }
+  @keyframes petalFall {
+    0%   { transform: translateY(-30px) rotate(0deg) translateX(0); opacity: 1; }
+    60%  { opacity: 0.8; }
+    100% { transform: translateY(105vh) rotate(360deg) translateX(60px); opacity: 0; }
+  }
+
+  /* STARS */
+  .star {
+    position: fixed;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+    animation: starTwinkle ease-in-out infinite;
+  }
+  @keyframes starTwinkle {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50%      { opacity: 1;   transform: scale(1.5); }
+  }
+
+  /* SEAGULLS */
+  .gull {
+    position: fixed;
+    z-index: 5;
+    animation: gullFly linear infinite;
+    font-size: 1.4rem;
+    opacity: 0.7;
+  }
+  @keyframes gullFly {
+    0%   { transform: translateX(-60px); }
+    100% { transform: translateX(calc(100vw + 60px)); }
+  }
+
+  /* MAIN CARD */
+  #card-wrapper {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px 120px;
+  }
+
+  #card {
+    max-width: 680px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+  }
+
+  /* HEADER LABEL */
+  .label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--ocean-foam);
+    opacity: 0.8;
+    margin-bottom: 18px;
+    animation: fadeInDown 1.2s ease both;
+  }
+
+  /* MAIN TITLE */
+  .title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    font-weight: 700;
+    font-style: italic;
+    line-height: 1.05;
+    color: var(--gold);
+    text-shadow:
+      0 0 40px rgba(245,200,66,0.5),
+      0 2px 0 rgba(200,154,16,0.4),
+      0 4px 20px rgba(0,0,0,0.3);
+    animation: titleReveal 1.5s cubic-bezier(0.22,1,0.36,1) 0.3s both;
+    margin-bottom: 8px;
+  }
+  @keyframes titleReveal {
+    from { opacity: 0; transform: translateY(40px) scale(0.9); filter: blur(10px); }
+    to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+
+  .title-name {
+    display: block;
+    font-size: clamp(4rem, 13vw, 9rem);
+    color: var(--white);
+    text-shadow:
+      0 0 60px rgba(255,255,255,0.4),
+      0 0 20px rgba(245,200,66,0.6),
+      0 2px 0 rgba(26,111,170,0.3);
+    animation: titleReveal 1.5s cubic-bezier(0.22,1,0.36,1) 0.6s both;
+    position: relative;
+  }
+
+  /* UNDERLINE WAVE */
+  .underline-wave {
+    width: 60%;
+    margin: 10px auto 30px;
+    animation: fadeInUp 1.2s ease 1s both;
+  }
+  @keyframes fadeInUp   { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* GLASS PANEL */
+  .glass {
+    background: rgba(10,74,122,0.35);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 24px;
+    padding: 36px 44px;
+    margin: 0 auto 28px;
+    max-width: 560px;
+    box-shadow:
+      0 8px 40px rgba(0,0,0,0.3),
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      0 0 0 1px rgba(245,200,66,0.1);
+    animation: fadeInUp 1.2s ease 1.1s both;
+  }
+
+  .message {
+    font-size: 1.35rem;
+    line-height: 1.9;
+    color: var(--gold-pale);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+  }
+
+  .message em {
+    color: var(--gold-light);
+    font-style: italic;
+    font-size: 1.1em;
+  }
+
+  /* HEARTS ROW */
+  .hearts {
+    font-size: 2rem;
+    letter-spacing: 0.3em;
+    animation: fadeInUp 1s ease 1.4s both;
+    margin: 10px 0 20px;
+  }
+  .heart-beat {
+    display: inline-block;
+    animation: heartPulse 1.2s ease-in-out infinite;
+  }
+  .heart-beat:nth-child(2) { animation-delay: 0.2s; }
+  .heart-beat:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes heartPulse {
+    0%, 100% { transform: scale(1); }
+    30%       { transform: scale(1.35); }
+  }
+
+  /* SIGNATURE */
+  .signature {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--ocean-foam);
+    opacity: 0.75;
+    letter-spacing: 0.08em;
+    animation: fadeInUp 1s ease 1.6s both;
+    margin-top: 6px;
+  }
+
+  /* BOTTOM FLOWER ROW */
+  .flower-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    font-size: 2.2rem;
+    animation: fadeInUp 1s ease 1.8s both;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .flower-row span {
+    display: inline-block;
+    animation: rowFlowerSway 3s ease-in-out infinite;
+    cursor: default;
+  }
+  .flower-row span:nth-child(2) { animation-delay: 0.4s; }
+  .flower-row span:nth-child(3) { animation-delay: 0.8s; }
+  .flower-row span:nth-child(4) { animation-delay: 1.2s; }
+  .flower-row span:nth-child(5) { animation-delay: 1.6s; }
+  @keyframes rowFlowerSway {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50%       { transform: translateY(-8px) rotate(5deg); }
+  }
+
+  /* SPARKLE BUTTON */
+  .btn {
+    margin-top: 32px;
+    padding: 16px 44px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    letter-spacing: 0.08em;
+    color: var(--ocean-deep);
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), #E8A800);
+    border: none;
+    border-radius: 50px;
+    cursor: none;
+    box-shadow: 0 4px 24px rgba(245,200,66,0.4), 0 2px 0 rgba(200,140,0,0.3);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    animation: fadeInUp 1s ease 2s both;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.3), transparent 60%);
+    border-radius: inherit;
+  }
+  .btn:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 8px 40px rgba(245,200,66,0.6), 0 2px 0 rgba(200,140,0,0.3);
+  }
+  .btn:active { transform: scale(0.97); }
+
+  /* FLOATING SPARKLES (JS-spawned) */
+  .sparkle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 20;
+    font-size: 1.2rem;
+    animation: sparkleFly ease-out forwards;
+  }
+  @keyframes sparkleFly {
+    0%   { opacity: 1; transform: translate(0,0) scale(1) rotate(0deg); }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0) rotate(360deg); }
+  }
+
+  /* KISS EMOJI BURST */
+  .kiss-burst {
+    position: fixed;
+    pointer-events: none;
+    z-index: 20;
+    animation: kissRise ease-out forwards;
+    font-size: 1.6rem;
+  }
+  @keyframes kissRise {
+    0%   { opacity: 1; transform: translateY(0) scale(0.5); }
+    100% { opacity: 0; transform: translateY(-120px) scale(1.2); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 480px) {
+    .glass { padding: 24px 20px; }
+    .message { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+
+<!-- SKY -->
+<div id="sky"></div>
+
+<!-- SUN -->
+<div id="sun"></div>
+<div id="sun-rays"></div>
+
+<!-- OCEAN -->
+<div id="ocean">
+  <div class="wave wave-1"></div>
+  <div class="wave wave-2"></div>
+  <div class="wave wave-3"></div>
+</div>
+
+<!-- SAND -->
+<div id="sand"></div>
+
+<!-- CARD -->
+<div id="card-wrapper">
+  <div id="card">
+    <div class="label">✦ a message from the heart ✦</div>
+
+    <h1 class="title">
+      I Love You
+      <span class="title-name">Ramya</span>
+    </h1>
+
+    <svg class="underline-wave" viewBox="0 0 300 20" fill="none">
+      <path d="M0 10 Q37.5 0 75 10 Q112.5 20 150 10 Q187.5 0 225 10 Q262.5 20 300 10"
+            stroke="#F5C842" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+    </svg>
+
+    <div class="glass">
+      <p class="message">
+        Like the ocean reaches endlessly for the shore,<br>
+        my heart reaches endlessly for <em>you</em>.<br><br>
+        You are my <em>golden sunrise</em> over calm waters,<br>
+        the warmth of summer sand beneath my feet,<br>
+        the most beautiful flower on the beach.<br><br>
+        <em>So much, Ramya — so incredibly much.</em>
+      </p>
+    </div>
+
+    <div class="glass" style="margin-top: 18px;">
+      <p class="message" style="font-size:1.55rem; font-style:italic; letter-spacing:0.04em;">
+        💛 <em>Divaakar loves you soo much, Ramya</em> 💛
+      </p>
+    </div>
+
+    <div class="hearts">
+      <span class="heart-beat">💛</span>
+      <span class="heart-beat">💙</span>
+      <span class="heart-beat">💛</span>
+    </div>
+
+    <div class="flower-row">
+      <span title="Sunflower">🌻</span>
+      <span title="Hibiscus">🌺</span>
+      <span title="Blossom">🌸</span>
+      <span title="Tropical">🌼</span>
+      <span title="Rose">🌹</span>
+    </div>
+
+    <div class="signature">— with all the love the sea can carry 🌊</div>
+
+    <button class="btn" id="sparkle-btn" onclick="createBurst(event)">
+      Send Love to Ramya 💛
+    </button>
+  </div>
+</div>
+
+<script>
+  /* ── CURSOR ── */
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+  });
+
+  /* ── SUN RAYS ── */
+  const raysEl = document.getElementById('sun-rays');
+  for (let i = 0; i < 16; i++) {
+    const ray = document.createElement('div');
+    ray.className = 'ray';
+    ray.style.transform = `rotate(${i * 22.5}deg)`;
+    ray.style.opacity = (0.15 + Math.random() * 0.25).toFixed(2);
+    raysEl.appendChild(ray);
+  }
+
+  /* ── STARS ── */
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}vw;
+      top:${Math.random()*45}vh;
+      animation-duration:${2 + Math.random()*3}s;
+      animation-delay:${Math.random()*4}s;
+    `;
+    document.body.appendChild(s);
+  }
+
+  /* ── CLOUDS ── */
+  const cloudData = [
+    { top: '8%',  height: 28, width: 140, dur: 55, delay: 0 },
+    { top: '15%', height: 20, width: 100, dur: 70, delay: -20 },
+    { top: '22%', height: 16, width: 80,  dur: 85, delay: -40 },
+    { top: '5%',  height: 24, width: 120, dur: 65, delay: -10 },
+  ];
+  cloudData.forEach(d => {
+    const c = document.createElement('div');
+    c.className = 'cloud';
+    c.style.cssText = `top:${d.top}; height:${d.height}px; width:${d.width}px;
+      animation-duration:${d.dur}s; animation-delay:${d.delay}s;`;
+    document.body.appendChild(c);
+  });
+
+  /* ── FOAM LINES ── */
+  const ocean = document.getElementById('ocean');
+  [15, 30, 45].forEach((pct, i) => {
+    const f = document.createElement('div');
+    f.className = 'foam';
+    f.style.cssText = `bottom:${pct}%; animation-delay:${i * 1.2}s; animation-duration:${3 + i}s;`;
+    ocean.appendChild(f);
+  });
+
+  /* ── SAND SHELLS ── */
+  const sand = document.getElementById('sand');
+  const shells = ['🐚','🦀','⭐','🐠','🐡'];
+  for (let i = 0; i < 8; i++) {
+    const sh = document.createElement('div');
+    sh.className = 'shell';
+    sh.textContent = shells[Math.floor(Math.random()*shells.length)];
+    sh.style.cssText = `left:${5+Math.random()*90}%; bottom:${10+Math.random()*55}%;
+      animation-delay:${Math.random()*4}s; animation-duration:${5+Math.random()*4}s;`;
+    sand.appendChild(sh);
+  }
+
+  /* ── BUBBLES ── */
+  function spawnBubble() {
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const size = 8 + Math.random() * 20;
+    b.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}vw;
+      bottom:${Math.random()*30}vh;
+      animation-duration:${5+Math.random()*6}s;
+      animation-delay:0s;
+    `;
+    document.body.appendChild(b);
+    setTimeout(() => b.remove(), 12000);
+  }
+  setInterval(spawnBubble, 1200);
+
+  /* ── FLOATING FLOWERS ── */
+  const flowerTypes = ['🌻','🌺','🌸','🌼','💐','🌹','🏵️'];
+  for (let i = 0; i < 9; i++) {
+    const fl = document.createElement('div');
+    fl.className = 'flower';
+    fl.style.cssText = `
+      left:${Math.random()*95}vw;
+      top:${10+Math.random()*70}vh;
+      font-size:${1.5+Math.random()*1.8}rem;
+      animation-duration:${4+Math.random()*4}s;
+      animation-delay:${Math.random()*5}s;
+    `;
+    fl.textContent = flowerTypes[i % flowerTypes.length];
+    document.body.appendChild(fl);
+  }
+
+  /* ── FALLING PETALS ── */
+  const petals = ['🌸','🌼','✿','❀','🌺'];
+  function spawnPetal() {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.textContent = petals[Math.floor(Math.random()*petals.length)];
+    const dur = 6 + Math.random() * 7;
+    p.style.cssText = `
+      left:${Math.random()*100}vw;
+      animation-duration:${dur}s;
+      animation-delay:0s;
+      font-size:${0.9+Math.random()*0.9}rem;
+    `;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), dur * 1000 + 500);
+  }
+  setInterval(spawnPetal, 700);
+  for (let i = 0; i < 10; i++) setTimeout(spawnPetal, i * 200);
+
+  /* ── SEAGULLS ── */
+  function spawnGull() {
+    const g = document.createElement('div');
+    g.className = 'gull';
+    g.textContent = '🕊️';
+    const dur = 18 + Math.random() * 14;
+    g.style.cssText = `
+      top:${8+Math.random()*28}vh;
+      animation-duration:${dur}s;
+      animation-delay:0s;
+    `;
+    document.body.appendChild(g);
+    setTimeout(() => g.remove(), dur * 1000 + 500);
+  }
+  setInterval(spawnGull, 5000);
+  spawnGull();
+
+  /* ── MOUSE SPARKLES ── */
+  const sparkEmojis = ['✨','⭐','💛','💙','🌟','💫','🌸','🌼'];
+  let lastSparkle = 0;
+  document.addEventListener('mousemove', e => {
+    const now = Date.now();
+    if (now - lastSparkle < 80) return;
+    lastSparkle = now;
+    const sp = document.createElement('div');
+    sp.className = 'sparkle';
+    sp.textContent = sparkEmojis[Math.floor(Math.random()*sparkEmojis.length)];
+    const dx = (Math.random()-0.5)*120;
+    const dy = -(40+Math.random()*80);
+    sp.style.cssText = `
+      left:${e.clientX}px; top:${e.clientY}px;
+      --dx:${dx}px; --dy:${dy}px;
+      animation-duration:${0.8+Math.random()*0.6}s;
+    `;
+    document.body.appendChild(sp);
+    setTimeout(() => sp.remove(), 1500);
+  });
+
+  /* ── CLICK SPARKS ── */
+  document.addEventListener('click', e => {
+    for (let i = 0; i < 10; i++) {
+      const sp = document.createElement('div');
+      sp.className = 'sparkle';
+      sp.textContent = sparkEmojis[Math.floor(Math.random()*sparkEmojis.length)];
+      const dx = (Math.random()-0.5)*200;
+      const dy = -(60+Math.random()*120);
+      sp.style.cssText = `
+        left:${e.clientX}px; top:${e.clientY}px;
+        --dx:${dx}px; --dy:${dy}px;
+        animation-duration:${0.7+Math.random()*0.7}s;
+        animation-delay:${Math.random()*0.2}s;
+      `;
+      document.body.appendChild(sp);
+      setTimeout(() => sp.remove(), 1600);
+    }
+  });
+
+  /* ── BUTTON BURST ── */
+  function createBurst(e) {
+    const rect = e.target.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const kisses = ['💛','💙','💋','🌊','🌻','🌺','💐','⭐','💫','🌸'];
+    for (let i = 0; i < 20; i++) {
+      const k = document.createElement('div');
+      k.className = 'kiss-burst';
+      k.textContent = kisses[i % kisses.length];
+      const angle = (i / 20) * Math.PI * 2;
+      const radius = 80 + Math.random() * 60;
+      const tx = Math.cos(angle) * radius;
+      const ty = Math.sin(angle) * radius - 60;
+      k.style.cssText = `
+        left:${cx}px; top:${cy}px;
+        --tx:${tx}px; --ty:${ty}px;
+        animation-duration:${0.8+Math.random()*0.5}s;
+        animation-delay:${Math.random()*0.15}s;
+        font-size:${1.2+Math.random()*0.8}rem;
+      `;
+      k.style.setProperty('--tx', tx+'px');
+      k.style.setProperty('--ty', ty+'px');
+      k.style.animation = `kissRise ${0.8+Math.random()*0.5}s ease-out forwards`;
+      k.style.setProperty('--dx', tx+'px');
+      // override with sparkle for explosion
+      k.style.cssText = `
+        left:${cx + tx}px; top:${cy + ty}px;
+        animation-duration:${0.9+Math.random()*0.5}s;
+        animation-delay:${Math.random()*0.1}s;
+        font-size:${1.2+Math.random()*1}rem;
+        position:fixed; z-index:20; pointer-events:none;
+        animation: kissRise ${0.9}s ease-out forwards;
+      `;
+      document.body.appendChild(k);
+      setTimeout(() => k.remove(), 1600);
+    }
+  }
+
+  /* ── TITLE LETTER ANIMATION ── */
+  document.querySelectorAll('.title').forEach(el => {
+    el.addEventListener('mouseover', function() {
+      this.style.textShadow = '0 0 60px rgba(245,200,66,0.9), 0 2px 0 rgba(200,154,16,0.4), 0 4px 30px rgba(0,0,0,0.3)';
+    });
+    el.addEventListener('mouseout', function() {
+      this.style.textShadow = '';
+    });
+  });
+</script>
+</body>
+</html>
