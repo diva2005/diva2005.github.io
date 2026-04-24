@@ -40,26 +40,39 @@ body {
   min-height:100vh;
   padding:40px 20px;
   text-align:center;
+  transition: transform 0.2s ease-out;
 }
 
-.title {
-  font-family:'Dancing Script',cursive;
-  font-size:1.1rem;
-  letter-spacing:3px;
-  opacity:0.7;
+/* TITLE INTRO */
+.title, .big, .name {
+  opacity:0;
+  transform: translateY(30px);
+  animation: introFade 1s ease forwards;
 }
 
-.big {
-  font-size:3.5rem;
-  margin:10px 0;
-}
-
+.title { animation-delay:0s; font-family:'Dancing Script'; letter-spacing:3px; opacity:0.7;}
+.big { animation-delay:0.2s; font-size:3.5rem;}
 .name {
-  font-family:'Playfair Display',serif;
+  animation-delay:0.4s;
+  font-family:'Playfair Display';
   font-size:clamp(4rem,12vw,8rem);
   background:linear-gradient(135deg,#F5D080,#D4A853);
   -webkit-background-clip:text;
   color:transparent;
+}
+
+@keyframes introFade {
+  to { opacity:1; transform: translateY(0); }
+}
+
+/* NAME GLOW */
+.name {
+  animation: introFade 1s ease forwards, glowPulse 4s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%,100% { filter: drop-shadow(0 0 10px rgba(212,168,83,0.2)); }
+  50% { filter: drop-shadow(0 0 25px rgba(212,168,83,0.5)); }
 }
 
 /* SCENES */
@@ -67,10 +80,21 @@ body {
   margin-top:35px;
   max-width:600px;
   padding:25px;
-  border:1px solid rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.08);
   border-radius:16px;
-  background:rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
+  background:rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px);
+
+  opacity:0;
+  transform: translateY(40px) scale(0.98);
+  transition:
+    opacity 1s cubic-bezier(0.22,1,0.36,1),
+    transform 1s cubic-bezier(0.22,1,0.36,1);
+}
+
+.scene.show {
+  opacity:1;
+  transform: translateY(0) scale(1);
 }
 
 .scene-title {
@@ -83,6 +107,15 @@ body {
 .dialogue {
   font-size:1.2rem;
   line-height:1.8;
+  opacity:0;
+  transform: translateY(10px);
+  transition: all 0.8s ease;
+}
+
+.scene.show .dialogue {
+  opacity:1;
+  transform: translateY(0);
+  transition-delay:0.3s;
 }
 
 .tamil {
@@ -102,9 +135,16 @@ button {
   font-size:1.2rem;
   cursor:pointer;
   transition:0.3s;
+  animation: floatBtn 3s ease-in-out infinite;
 }
+
 button:hover {
   transform:scale(1.05);
+}
+
+@keyframes floatBtn {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 </style>
 </head>
@@ -116,11 +156,10 @@ button:hover {
 <div class="wrapper">
 
   <div class="title">O K K A N M A N I</div>
-
   <div class="big">I love you,</div>
   <div class="name">Ramya</div>
 
-  <!-- SCENE 1 -->
+  <!-- SCENES -->
   <div class="scene">
     <div class="scene-title">SCENE 01 — FIRST FEELING</div>
     <div class="dialogue">
@@ -132,7 +171,6 @@ button:hover {
     </div>
   </div>
 
-  <!-- SCENE 2 -->
   <div class="scene">
     <div class="scene-title">SCENE 02 — REAL LOVE</div>
     <div class="dialogue">
@@ -144,7 +182,6 @@ button:hover {
     </div>
   </div>
 
-  <!-- SCENE 3 -->
   <div class="scene">
     <div class="scene-title">SCENE 03 — THE TRUTH</div>
     <div class="dialogue">
@@ -155,7 +192,6 @@ button:hover {
     </div>
   </div>
 
-  <!-- FINAL -->
   <div class="scene">
     <div class="dialogue">
       Divaakar loves you.<br>
@@ -165,50 +201,48 @@ button:hover {
     </div>
   </div>
 
-  <!-- BUTTON -->
   <button id="musicBtn">▶ Start Our Story</button>
 
 </div>
 
 <!-- AUDIO -->
 <audio id="music" loop preload="auto">
-  <source src="song.mp3.mp3" type="audio/mpeg">
+  <source src="song.mp3" type="audio/mpeg">
 </audio>
 
 <script>
 const audio = document.getElementById("music");
 const btn = document.getElementById("musicBtn");
+const scenes = document.querySelectorAll(".scene");
 
-// Debug: check if audio loads
-audio.addEventListener("canplaythrough", () => {
-  console.log("✅ Audio loaded");
-});
+/* 🎬 SCENE REVEAL */
+function revealScenes() {
+  scenes.forEach((scene, i) => {
+    setTimeout(() => {
+      scene.classList.add("show");
+    }, 600 + (i * 700));
+  });
+}
 
-audio.addEventListener("error", () => {
-  console.log("❌ Audio failed to load");
-  alert("Audio not loading. Check song.mp3 path.");
-});
+window.addEventListener("load", revealScenes);
 
-// Button click
+/* 🎵 AUDIO */
 btn.addEventListener("click", async () => {
   try {
     await audio.play();
-    btn.innerText = "Playing 🎶";
-  } catch (err) {
-    console.log("Play blocked:", err);
-    alert("Click again to start 🎶");
+    btn.innerText = "This is us 💛";
+  } catch {
+    alert("Click again 🎶");
   }
 });
 
-// Backup trigger (first interaction anywhere)
-document.addEventListener("click", async () => {
-  if (audio.paused) {
-    try {
-      await audio.play();
-    } catch {}
-  }
-}, { once: true });
-
+/* 🎯 PARALLAX */
+document.addEventListener("mousemove", (e) => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 10;
+  const y = (e.clientY / window.innerHeight - 0.5) * 10;
+  document.querySelector(".wrapper").style.transform =
+    `translate(${x}px, ${y}px)`;
+});
 </script>
 
 </body>
